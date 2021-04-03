@@ -23,5 +23,5 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_JS_INC} ${OBS_ROOT_DI
 
 # Essential library files to link to a node addon
 # You should add this line in every CMake.js based project
-target_link_directories( ${PROJECT_NAME} PRIVATE "${OBS_ROOT_DIR}/build/libobs/Debug/" )
+target_link_directories( ${PROJECT_NAME} PRIVATE "${OBS_ROOT_DIR}/build/libobs/Release/" )
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} obs)
