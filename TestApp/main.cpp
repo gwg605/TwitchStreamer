@@ -332,7 +332,7 @@ int main( int argc, char* argv[] ) {
 
 				// configure service
 				OBSData service_settings_new = obs_data_create();
-				obs_data_set_string( service_settings_new, "key", "live_670759013_ieBX1ts831KhHgbHbcwSh05b7VzFmy" );
+				obs_data_set_string( service_settings_new, "key", "<Twitch key should be here>" );
 				obs_data_set_string( service_settings_new, "server", "auto" );
 				obs_data_set_string( service_settings_new, "service", "Twitch" );
 				obs_service_update( service, service_settings_new );
