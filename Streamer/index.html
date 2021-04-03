@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+	<!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">-->
+	<title>Twitch Streamer</title>
+</head>
+
+<body>
+	<h1>Twitch Streamer</h1>
+	<ul>
+		<li>Node.js <span id="node-version"></span></li>
+		<li>Chromium <span id="chrome-version"></span></li>
+		<li>Electron <span id="electron-version"></span></li>
+		<li>OBS Addon <span id="obsaddon-version"></span></li>
+		<li>OBS <span id="obsaddon-obs-version"></span></li>
+	</ul>
+	<table border="0">
+		<tr>
+			<td>Key:</td>
+			<td><input type=text id="twitch_key" alt="Enter twitch key here"
+					value="live_670759013_ieBX1ts831KhHgbHbcwSh05b7VzFmy" /></td>
+		</tr>
+		<tr>
+			<td colspan="2"><button id="button_start_stop">Start streaming</button></td>
+		</tr>
+		<tr>
+			<td colspan="2"><span id="error_msg" style="color: red;"></span></td>
+		</tr>
+	</table>
+
+
+	<!-- You can also require other files to run in this process -->
+	<script src="./renderer.js"></script>
+	<script type="text/javascript">
+		const obs_addon = require('obs-addon');
+
+		function UpdateState() {
+			let button_start_stop = document.getElementById('button_start_stop');
+			if (obs_addon.IsStarted()) {
+				button_start_stop.innerText = 'Stop streaming';
+			} else {
+				button_start_stop.innerText = 'Start streaming';
+			}
+		}
+
+		function SetErrorMsg(msg) {
+			document.getElementById('error_msg').innerText = msg;
+		}
+
+		const button = document.getElementById('button_start_stop');
+		button.addEventListener('click', function () {
+			if (obs_addon.IsStarted()) {
+				obs_addon.Stop();
+			} else {
+				let twitch_key = document.getElementById('twitch_key').value;
+				if (twitch_key) {
+					SetErrorMsg(null);
+					console.log('twitch_key=' + twitch_key);
+					let res = obs_addon.Start(twitch_key);
+					console.log('res=' + res);
+					if (res == -1) {
+						SetErrorMsg("Fatal error: Something wrong");
+					}
+				} else {
+					SetErrorMsg("Please enter key");
+				}
+			}
+			UpdateState();
+		});
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "obs-addon",
+  "description": "",
+  "version": "1.0.0",
+  "cmake-js": {
+    "runtime": "electron",
+    "runtimeVersion": "12.0.2"
+  }
+}
