@@ -1,0 +1,59 @@
+diff --git a/libobs/util/platform-windows.c b/libobs/util/platform-windows.c
+index dad6c0a17..f4c18bb71 100644
+--- a/libobs/util/platform-windows.c
++++ b/libobs/util/platform-windows.c
+@@ -63,7 +63,7 @@ void *os_dlopen(const char *path)
+ {
+ 	struct dstr dll_name;
+ 	wchar_t *wpath;
+-	wchar_t *wpath_slash;
++	//wchar_t *wpath_slash;
+ 	HMODULE h_library = NULL;
+ 
+ 	if (!path)
+@@ -80,19 +80,22 @@ void *os_dlopen(const char *path)
+ 	/* to make module dependency issues easier to deal with, allow
+ 	 * dynamically loaded libraries on windows to search for dependent
+ 	 * libraries that are within the library's own directory */
+-	wpath_slash = wcsrchr(wpath, L'/');
+-	if (wpath_slash) {
+-		*wpath_slash = 0;
+-		SetDllDirectoryW(wpath);
+-		*wpath_slash = L'/';
+-	}
++	// gwg605@gmail.com:
++	// 1. It is not clear what issue is fixed by this strange code
++	// 2. It does not work on my computer, get error 126
++	//wpath_slash = wcsrchr(wpath, L'/');
++	//if (wpath_slash) {
++	//	*wpath_slash = 0;
++	//	SetDllDirectoryW(wpath);
++	//	*wpath_slash = L'/';
++	//}
+ 
+ 	h_library = LoadLibraryW(wpath);
+ 
+ 	bfree(wpath);
+ 
+-	if (wpath_slash)
+-		SetDllDirectoryW(NULL);
++	//if (wpath_slash)
++	//	SetDllDirectoryW(NULL);
+ 
+ 	if (!h_library) {
+ 		DWORD error = GetLastError();
+diff --git a/plugins/obs-filters/noise-suppress-filter.c b/plugins/obs-filters/noise-suppress-filter.c
+index d8d4c4465..354e18c80 100644
+--- a/plugins/obs-filters/noise-suppress-filter.c
++++ b/plugins/obs-filters/noise-suppress-filter.c
+@@ -892,7 +892,9 @@ static obs_properties_t *noise_suppress_properties(void *data)
+ #endif
+ 
+ 	UNUSED_PARAMETER(data);
+-#ifdef LIBNVAFX_ENABLED
++// gwg605@gmail.com: disable the following code due compilation error:
++// 'method' undefined
++#ifdef LIBNVAFX_ENABLED_1
+ 	obs_property_t *nvafx_slider = obs_properties_add_float_slider(
+ 		ppts, S_NVAFX_INTENSITY, TEXT_NVAFX_INTENSITY, 0.0f, 1.0f,
+ 		0.01f);
