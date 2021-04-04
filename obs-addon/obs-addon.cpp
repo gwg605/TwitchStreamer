@@ -58,7 +58,7 @@ static void Start( const v8::FunctionCallbackInfo<v8::Value>& args ) {
 
 	v8::String::Utf8Value key( args.GetIsolate(), args[ 0 ] );
 
-	args.GetReturnValue().Set( data->Obj()->Start( *key ) );
+	args.GetReturnValue().Set( static_cast<int>( data->Obj()->Start( *key ) ) );
 }
 
 static void Stop( const v8::FunctionCallbackInfo<v8::Value>& args ) {
@@ -75,7 +75,7 @@ NODE_MODULE_INIT( /* exports, module, context */ ) {
 	// Create a new instance of `AddonData` for this instance of the addon and
 	// tie its life cycle to that of the Node.js environment.
 	auto streamer = std::make_shared<twitch_streamer::CStreamer>();
-	if( streamer->Init() != 0 ) {
+	if( streamer->Init() != twitch_streamer::Error::Ok ) {
 		isolate->ThrowException(
 			Exception::TypeError( String::NewFromUtf8( isolate, "Initialization failed" ).ToLocalChecked() ) );
 		return;
@@ -86,9 +86,7 @@ NODE_MODULE_INIT( /* exports, module, context */ ) {
 	// expose.
 	Local<External> external = External::New( isolate, data );
 
-	// Expose the method `Method` to JavaScript, and make sure it receives the
-	// per-addon-instance data we created above by passing `external` as the
-	// third parameter to the `FunctionTemplate` constructor.
+	// Expose methods
 	exports
 		->Set( context, String::NewFromUtf8( isolate, "GetVersion" ).ToLocalChecked(),
 			   FunctionTemplate::New( isolate, GetVersion, external )->GetFunction( context ).ToLocalChecked() )

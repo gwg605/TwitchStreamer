@@ -31,10 +31,10 @@ static void LoadModules( const char* data_path, const char* bin_path ) {
 	}
 }
 
-int CStreamer::Init() {
+Error CStreamer::Init() {
 	if( !obs_startup( "en-us", NULL, NULL ) ) {
 		blog( LOG_ERROR, "obs_startup() failed" );
-		return -1;
+		return Error::InitializationFailed;
 	}
 
 #ifdef _DEBUG
@@ -44,7 +44,7 @@ int CStreamer::Init() {
 #else
 	obs_add_data_path( "../obs/build/rundir/Release/data/libobs/" );
 
-	LoadModules( "../obs/build/rundir/Debug/Release/obs-plugins/", "../obs/build/rundir/Release/obs-plugins/64bit/" );
+	LoadModules( "../obs/build/rundir/Release/data/obs-plugins/", "../obs/build/rundir/Release/obs-plugins/64bit/" );
 #endif
 
 	obs_post_load_modules();
@@ -76,7 +76,7 @@ int CStreamer::Init() {
 	int err = obs_reset_video( &vi );
 	if( err != OBS_VIDEO_SUCCESS ) {
 		blog( LOG_ERROR, "obs_reset_video() failed, err=%i", err );
-		return -1;
+		return Error::InitializationFailed;
 	}
 
 	obs_audio_info ai;
@@ -85,10 +85,10 @@ int CStreamer::Init() {
 
 	if( !obs_reset_audio( &ai ) ) {
 		blog( LOG_ERROR, "obs_reset_audio() failed" );
-		return -1;
+		return Error::InitializationFailed;
 	}
 
-	return 0;
+	return Error::Ok;
 }
 
 void CStreamer::Shutdown() {
@@ -122,7 +122,7 @@ const char* GetPropertyListItem( obs_properties_t* properties, const char* prop_
 	return obs_property_list_item_string( property, idx );
 }
 
-OBSSource SourceSetup() {
+static OBSSource SourceSetup() {
 	OBSSource source = obs_source_create( "dshow_input", "Capture", nullptr, nullptr );
 	obs_properties_t* source_properties = obs_source_properties( source );
 	const char* video_device_id = GetPropertyListItem( source_properties, "video_device_id", 0 );
@@ -148,7 +148,7 @@ OBSSource SourceSetup() {
 	return source;
 }
 
-OBSEncoder VideoEncoderSetup() {
+static OBSEncoder VideoEncoderSetup() {
 	OBSEncoder video_encoder = obs_video_encoder_create( "obs_x264", "Video Encoder(x264)", nullptr, nullptr );
 	video_t* video = obs_get_video();
 
@@ -162,7 +162,7 @@ OBSEncoder VideoEncoderSetup() {
 	return video_encoder;
 }
 
-OBSEncoder AudioEncoderSetup() {
+static OBSEncoder AudioEncoderSetup() {
 	OBSEncoder audio_encoder = obs_audio_encoder_create( "ffmpeg_aac", "Audio Encoder(AAC)", nullptr, 0, nullptr );
 
 	audio_t* audio = obs_get_audio();
@@ -174,7 +174,7 @@ OBSEncoder AudioEncoderSetup() {
 	return audio_encoder;
 }
 
-OBSService ServiceSetup( const std::string& key ) {
+static OBSService ServiceSetup( const std::string& key ) {
 	OBSService service = obs_service_create( "rtmp_common", "default_service", nullptr, nullptr );
 
 	OBSData service_settings = obs_data_create();
@@ -186,10 +186,10 @@ OBSService ServiceSetup( const std::string& key ) {
 	return service;
 }
 
-int CStreamer::Start( const std::string& twitch_key ) {
+Error CStreamer::Start( const std::string& twitch_key ) {
 	if( m_Started ) {
 		blog( LOG_INFO, "Start() - Already started" );
-		return 0;
+		return Error::Ok;
 	}
 
 	OBSSource source = SourceSetup();
@@ -208,11 +208,11 @@ int CStreamer::Start( const std::string& twitch_key ) {
 	m_Started = obs_output_start( m_StreamingOutput );
 	if( !m_Started ) {
 		blog( LOG_ERROR, "Start() - obs_output_start failed" );
-		return -1;
+		return Error::UnableToStart;
 	}
 
 	blog( LOG_ERROR, "Start() - Streaming started" );
-	return 0;
+	return Error::Ok;
 }
 
 void CStreamer::Stop() {

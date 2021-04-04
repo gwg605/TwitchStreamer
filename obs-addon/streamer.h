@@ -1,5 +1,6 @@
 #pragma once
 
+#include "streamer_types.h"
 #include <string>
 #include <memory>
 #include "libobs/obs.hpp"
@@ -20,7 +21,7 @@ public:
 	/**
 	 * 	Initialize OBS environment
 	 */
-	int Init();
+	Error Init();
 
 	/**
 	 *	Check if streaming is already started
@@ -31,7 +32,7 @@ public:
 	 *	Start streaming
 	 *	@param twitch_key - streaming Twitch key
 	 */
-	int Start( const std::string& twitch_key );
+	Error Start( const std::string& twitch_key );
 
 	/**
 	 *	Stop streaming
