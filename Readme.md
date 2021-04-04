@@ -6,7 +6,7 @@ Supported platforms: Windows 10 64-bit only
 
 # Content
 - Streamer - Twitch Streaming application base on Electron (electron-quick-start - https://github.com/electron/electron-quick-start)
-- osb - OSB-Studio project (https://github.com/obsproject/obs-studio)
+- obs - OBS-Studio project (https://github.com/obsproject/obs-studio)
 - obs-addon - node.js native plugin. It implements OBS pipeline initialization and streaming start/stop functionality
 - TestApp - Windows test application for streaming to Twitch
 - Readme.md - this file
@@ -46,7 +46,7 @@ cd build
 cmake -A x64 -DCMAKE_TOOLCHAIN_FILE=.../vcpkg/scripts/buildsystems/vcpkg.cmake -DQTDIR=C:\Qt\Qt5.12.9\5.12.9\msvc2017_64\ ..
 cmake --build . --config Release
 ```
-- build osb-addon
+- build obs-addon
 ```
 cd obs-addon
 cmake-js

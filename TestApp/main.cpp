@@ -134,7 +134,7 @@ const char* GetPropertyListItem( obs_properties_t* properties, const char* prop_
 	return obs_property_list_item_string( property, idx );
 }
 
-void load_modules( const char* data_path, const char* bin_path ) {
+void LoadModules( const char* data_path, const char* bin_path ) {
 	std::filesystem::path modules_search{ data_path };
 
 	if( !std::filesystem::is_directory( modules_search ) ) {
@@ -142,7 +142,7 @@ void load_modules( const char* data_path, const char* bin_path ) {
 		return;
 	}
 
-	for( auto& entry : std::filesystem::directory_iterator( modules_search ) ) {
+	for( auto entry : std::filesystem::directory_iterator( modules_search ) ) {
 		std::string module_data_path = entry.path().u8string();
 		//blog( LOG_INFO, "\t%s", module_data_path.c_str() );
 
@@ -188,13 +188,13 @@ int main( int argc, char* argv[] ) {
 #ifdef _DEBUG
 		obs_add_data_path( "../obs/build/rundir/Debug/data/libobs/" );
 
-		load_modules( "../obs/build/rundir/Debug/data/obs-plugins/",
-					  "../obs/build/rundir/Debug/obs-plugins/64bit/" );
+		LoadModules( "../obs/build/rundir/Debug/data/obs-plugins/",
+			         "../obs/build/rundir/Debug/obs-plugins/64bit/" );
 #else
 		obs_add_data_path( "../obs/build/rundir/Release/data/libobs/" );
 
-		load_modules( "../obs/build/rundir/Release/data/obs-plugins/",
-					  "../obs/build/rundir/Release/obs-plugins/64bit/" );
+		LoadModules( "../obs/build/rundir/Release/data/obs-plugins/",
+					 "../obs/build/rundir/Release/obs-plugins/64bit/" );
 #endif
 
 		obs_post_load_modules();

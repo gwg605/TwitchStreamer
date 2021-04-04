@@ -12,7 +12,7 @@ static void LoadModules( const char* data_path, const char* bin_path ) {
 		return;
 	}
 
-	for( auto& entry : std::filesystem::directory_iterator( modules_search ) ) {
+	for( auto entry : std::filesystem::directory_iterator( modules_search ) ) {
 		std::string module_data_path = entry.path().u8string();
 
 		std::string module_name = entry.path().filename().u8string();
@@ -49,6 +49,8 @@ Error CStreamer::Init() {
 
 	obs_post_load_modules();
 
+	// this is just for troubleshooting, I had lot of probelems with loading modules/plugins
+	// TODO: replace to something cross-platform
 	char buf[ 4096 ];
 	DWORD len = ::GetCurrentDirectoryA( sizeof( buf ), buf );
 	buf[ len ] = 0;
