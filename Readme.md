@@ -1,8 +1,6 @@
 # Overview
 
-The goal of this assignment is to create an electron application that will interact with a native
-module that uses the OBS project (https://github.com/obsproject) for its backend in order to
-stream to Twitch.
+The goal of this assignment is to create an electron application that will interact with a native module that uses the OBS project (https://github.com/obsproject) for its backend in order to stream to Twitch.
 
 Supported platforms: Windows 10 64-bit only
 
@@ -67,9 +65,9 @@ copy D:\projects\vcpkg\packages\ffmpeg_x64-windows\bin\*.dll Streamer\node_modul
 cd Streamer
 npm start
 ```
-Put your Twitch key to edit box and press 'Start streaming' button. The error message will be displayed if error occured, otherwise 'Start streaming' button will be repaced to 'Stop streaming'.
+Put your Twitch key to the edit box and press the 'Start streaming' button. The error message will be displayed if an error occurred, otherwise the 'Start streaming' button will be replaced to 'Stop streaming'.
 
-# Troublshooting
-Streamer/main.js file contains commected 'mainWindow.webContents.openDevTools()' line. Uncomment this line to see DevTools. The streamer application produces some output to the console.
+# Troubleshooting
+Streamer/main.js file contains the commented 'mainWindow.webContents.openDevTools()' line. Uncomment this line to see DevTools. The streamer application produces some output to the console.
 
-You can build 'Debug' versions: OBS, obs-addon. These version will provide detailed logs to the console.
+You can build 'Debug' versions: OBS, obs-addon. These versions will provide detailed logs to the console.
