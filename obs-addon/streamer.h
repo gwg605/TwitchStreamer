@@ -7,6 +7,8 @@
 
 namespace twitch_streamer {
 
+using OBSProperties = OBSObj<obs_properties_t*, obs_properties_destroy>;
+
 class CStreamer {
 public:
 	using Ptr = std::shared_ptr<CStreamer>;

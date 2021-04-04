@@ -124,7 +124,11 @@ const char* GetPropertyListItem( obs_properties_t* properties, const char* prop_
 
 static OBSSource SourceSetup() {
 	OBSSource source = obs_source_create( "dshow_input", "Capture", nullptr, nullptr );
-	obs_properties_t* source_properties = obs_source_properties( source );
+	if( source == nullptr ) {
+		return nullptr;
+	}
+
+	OBSProperties source_properties = obs_source_properties( source );
 	const char* video_device_id = GetPropertyListItem( source_properties, "video_device_id", 0 );
 	const char* audio_device_id = GetPropertyListItem( source_properties, "audio_device_id", 0 );
 
@@ -150,9 +154,13 @@ static OBSSource SourceSetup() {
 
 static OBSEncoder VideoEncoderSetup() {
 	OBSEncoder video_encoder = obs_video_encoder_create( "obs_x264", "Video Encoder(x264)", nullptr, nullptr );
-	video_t* video = obs_get_video();
+	if( video_encoder == nullptr ) {
+		return nullptr;
+	}
 
+	video_t* video = obs_get_video();
 	obs_encoder_set_video( video_encoder, video );
+
 	OBSData ve_settings = obs_data_create();
 	obs_data_set_int( ve_settings, "bitrate", 2400 );
 	obs_data_set_string( ve_settings, "rate_control", "CBR" );
@@ -164,6 +172,9 @@ static OBSEncoder VideoEncoderSetup() {
 
 static OBSEncoder AudioEncoderSetup() {
 	OBSEncoder audio_encoder = obs_audio_encoder_create( "ffmpeg_aac", "Audio Encoder(AAC)", nullptr, 0, nullptr );
+	if( audio_encoder == nullptr ) {
+		return nullptr;
+	}
 
 	audio_t* audio = obs_get_audio();
 	obs_encoder_set_audio( audio_encoder, audio );
@@ -176,6 +187,9 @@ static OBSEncoder AudioEncoderSetup() {
 
 static OBSService ServiceSetup( const std::string& key ) {
 	OBSService service = obs_service_create( "rtmp_common", "default_service", nullptr, nullptr );
+	if( service == nullptr ) {
+		return nullptr;
+	}
 
 	OBSData service_settings = obs_data_create();
 	obs_data_set_string( service_settings, "key", key.c_str() );
@@ -215,9 +229,17 @@ Error CStreamer::Start( const std::string& twitch_key ) {
 	OBSEncoder video_encoder = VideoEncoderSetup();
 	OBSEncoder audio_encoder = AudioEncoderSetup();
 	OBSService service = ServiceSetup( twitch_key );
+	if( source == nullptr || video_encoder == nullptr || audio_encoder == nullptr || service == nullptr ) {
+		blog( LOG_ERROR, "Start() - Initialization failed" );
+		return Error::InitializationFailed;
+	}
 
 	// start streaming
 	m_StreamingOutput = obs_output_create( "rtmp_output", "Streaming output", nullptr, nullptr );
+	if( m_StreamingOutput == nullptr ) {
+		blog( LOG_ERROR, "Start() - Unable to create output" );
+		return Error::UnableToStart;
+	}
 	obs_output_set_video_encoder( m_StreamingOutput, video_encoder );
 	obs_output_set_audio_encoder( m_StreamingOutput, audio_encoder, 0 );
 	obs_output_set_service( m_StreamingOutput, service );
