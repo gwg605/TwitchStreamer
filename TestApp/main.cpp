@@ -167,13 +167,17 @@ int main( int argc, char* argv[] ) {
 
 	if( obs_startup( "en-us", NULL, NULL ) ) {
 
+#ifdef _DEBUG
 		obs_add_data_path( "../obs/build/rundir/Debug/data/libobs/" );
-
-		//obs_add_module_path( "../../obs/build/rundir/Debug/obs-plugins/64bit/", "../obs/build/rundir/Debug/data/obs-plugins/%module%" );
 
 		load_modules( "../obs/build/rundir/Debug/data/obs-plugins/",
 					  "../obs/build/rundir/Debug/obs-plugins/64bit/" );
-		//		obs_load_all_modules();
+#else
+		obs_add_data_path( "../obs/build/rundir/Release/data/libobs/" );
+
+		load_modules( "../obs/build/rundir/Release/data/obs-plugins/",
+					  "../obs/build/rundir/Release/obs-plugins/64bit/" );
+#endif
 
 		obs_post_load_modules();
 

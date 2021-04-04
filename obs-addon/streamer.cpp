@@ -37,9 +37,15 @@ int CStreamer::Init() {
 		return -1;
 	}
 
+#ifdef _DEBUG
 	obs_add_data_path( "../obs/build/rundir/Debug/data/libobs/" );
 
 	LoadModules( "../obs/build/rundir/Debug/data/obs-plugins/", "../obs/build/rundir/Debug/obs-plugins/64bit/" );
+#else
+	obs_add_data_path( "../obs/build/rundir/Release/data/libobs/" );
+
+	LoadModules( "../obs/build/rundir/Debug/Release/obs-plugins/", "../obs/build/rundir/Release/obs-plugins/64bit/" );
+#endif
 
 	obs_post_load_modules();
 
