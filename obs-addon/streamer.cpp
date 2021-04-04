@@ -186,10 +186,29 @@ static OBSService ServiceSetup( const std::string& key ) {
 	return service;
 }
 
+static const char* s_RequiredModules[] = { "win-dshow", "rtmp-services", "obs-x264", "obs-outputs", "obs-ffmpeg" };
+
+static bool CheckForRequiredModules() {
+	for( const auto& name : s_RequiredModules ) {
+		obs_module_t* module = obs_get_module( name );
+		if( module == nullptr ) {
+			blog( LOG_ERROR, "Module '%s' is not found", name );
+			return false;
+		}
+	}
+
+	return true;
+}
+
 Error CStreamer::Start( const std::string& twitch_key ) {
 	if( m_Started ) {
 		blog( LOG_INFO, "Start() - Already started" );
 		return Error::Ok;
+	}
+
+	if( !CheckForRequiredModules() ) {
+		blog( LOG_ERROR, "Start() - Some modules are not loaded" );
+		return Error::ModuleNotFound;
 	}
 
 	OBSSource source = SourceSetup();
@@ -211,7 +230,7 @@ Error CStreamer::Start( const std::string& twitch_key ) {
 		return Error::UnableToStart;
 	}
 
-	blog( LOG_ERROR, "Start() - Streaming started" );
+	blog( LOG_INFO, "Start() - Streaming started" );
 	return Error::Ok;
 }
 
@@ -228,7 +247,11 @@ void CStreamer::Stop() {
 }
 
 std::string CStreamer::GetVersion() {
+#ifdef _DEBUG
+	return "v1.0.0.0 (Debug)";
+#else
 	return "v1.0.0.0";
+#endif
 }
 
 std::string CStreamer::GetOBSVersion() {

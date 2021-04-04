@@ -57,8 +57,7 @@ static void Start( const v8::FunctionCallbackInfo<v8::Value>& args ) {
 	}
 
 	v8::String::Utf8Value key( args.GetIsolate(), args[ 0 ] );
-
-	args.GetReturnValue().Set( static_cast<int>( data->Obj()->Start( *key ) ) );
+	args.GetReturnValue().Set( static_cast<double>( data->Obj()->Start( *key ) ) );
 }
 
 static void Stop( const v8::FunctionCallbackInfo<v8::Value>& args ) {

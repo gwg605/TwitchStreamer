@@ -20,7 +20,8 @@
 	</ul>
 	<table border="0">
 		<tr>
-			<td><label for="twitch_key">Twitch key:</labe></td>
+			<td><label for="twitch_key">Twitch key:</labe>
+			</td>
 			<td><input type=text id="twitch_key" placeholder="Enter twitch key here" /></td>
 		</tr>
 		<tr>
@@ -50,6 +51,30 @@
 			document.getElementById('error_msg').innerText = msg;
 		}
 
+		function SetErrorByCode(code) {
+			let msg = null;
+			switch (code) {
+				case 0:
+					break;
+				case -1:
+					msg = 'Fatal error';
+					break;
+				case -2:
+					msg = 'Initialization failed';
+					break;
+				case -3:
+					msg = 'Starting procedure is failed';
+					break;
+				case -4:
+					msg = 'Required module not found';
+					break;
+				default:
+					msg = 'Unknown error: ' + code.toString();
+					break;
+			}
+			SetErrorMsg(msg);
+		}
+
 		const button = document.getElementById('button_start_stop');
 		button.addEventListener('click', function () {
 			if (obs_addon.IsStarted()) {
@@ -61,9 +86,7 @@
 					console.log('twitch_key=' + twitch_key);
 					let res = obs_addon.Start(twitch_key);
 					console.log('res=' + res);
-					if (res == -1) {
-						SetErrorMsg("Fatal error: Something wrong");
-					}
+					SetErrorByCode(res);
 				} else {
 					SetErrorMsg("Please enter Twitch key");
 				}

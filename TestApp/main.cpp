@@ -162,6 +162,24 @@ void load_modules( const char* data_path, const char* bin_path ) {
 	}
 }
 
+void mc(void* param, obs_module_t* module) {
+	obs_get_module_name( module );
+	blog( LOG_INFO, "Module: %s, Lib=%s", obs_get_module_name( module ), obs_get_module_lib( module ) );
+}
+
+static const char* s_RequiredModules[] = { "win-dshow", "rtmp-services", "obs-x264", "obs-outputs", "obs-ffmpeg" };
+
+static bool CheckForRequiredModules() {
+	for( const auto& name : s_RequiredModules ) {
+		obs_module_t* module = obs_get_module( name );
+		if( module == nullptr ) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
 int main( int argc, char* argv[] ) {
 	int result = -1;
 
@@ -180,6 +198,8 @@ int main( int argc, char* argv[] ) {
 #endif
 
 		obs_post_load_modules();
+
+		CheckForRequiredModules();
 
 		char buf[ 4096 ];
 		DWORD len = ::GetCurrentDirectoryA( sizeof( buf ), buf );
