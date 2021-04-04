@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
 	<!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">-->
+	<meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">-->
 	<title>Twitch Streamer</title>
 </head>
 
@@ -20,8 +20,8 @@
 	</ul>
 	<table border="0">
 		<tr>
-			<td>Key:</td>
-			<td><input type=text id="twitch_key" alt="Enter twitch key here" /></td>
+			<td><label for="twitch_key">Twitch key:</labe></td>
+			<td><input type=text id="twitch_key" placeholder="Enter twitch key here" /></td>
 		</tr>
 		<tr>
 			<td colspan="2"><button id="button_start_stop">Start streaming</button></td>
@@ -65,7 +65,7 @@
 						SetErrorMsg("Fatal error: Something wrong");
 					}
 				} else {
-					SetErrorMsg("Please enter key");
+					SetErrorMsg("Please enter Twitch key");
 				}
 			}
 			UpdateState();
